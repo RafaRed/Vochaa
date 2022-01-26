@@ -1,0 +1,27 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+.topnav {
+    background-color: #fff;
+    overflow: hidden;
+    border-radius: 10px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+  }
+
+.topnav a {
+    float: left;
+    color: #969696;
+    text-align: center;
+    padding: 10px 16px;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  /* Add a color to the active/current link */
+.topnav a.active {
+
+    color: #000000;
+  }
