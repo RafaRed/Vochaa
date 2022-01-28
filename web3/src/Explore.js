@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import injectSheet from 'react-jss';
 import firebase from './model/firebaseConnect'
 import { getDatabase, ref, onValue} from "firebase/database";
+import { Link } from 'react-router-dom'
 
 const styles ={
     links:{
@@ -27,12 +28,14 @@ function CreateBoard(props){
     for (const [key, value] of Object.entries(props.projects)) {
       const item = props.projects[key];
       const project = (
-        <div key={item['name']} className={[props.classes.app,"app"].join(' ')}>
+        <Link to={"/project/"+props.projects[key].address} key={item['name']}>       
+        <div  className={[props.classes.app,"app"].join(' ')}>
           <div className="app-logo">
           <img src={item['logo']} />
           </div>
         <p className="app-name">{item['name']}</p>
         </div>
+        </Link>
       )
       projectWidgets.push(project)
     }
