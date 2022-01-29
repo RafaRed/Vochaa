@@ -33,24 +33,26 @@ function addProject(name,symbol,address,logo){
 
 async function searchContract(chain,contract,setAppName,setAppSymbol,setAppLogo,setAppContract,setStatus){
   if(isValidAddress(contract)){
-    const url = "https://api.covalenthq.com/v1/"+chain+"/tokens/tokenlists/all/?key="+process.env.REACT_APP_COVALANT_API+"&match=%7B%22contract_address%22:%22"+contract+"%22%7D"
+    
+    //const url = "https://api.covalenthq.com/v1/"+chain+"/tokens/tokenlists/all/?key="+process.env.REACT_APP_COVALANT_API+"&match=%7B%22contract_address%22:%22"+contract+"%22%7D"
+    const url = "https://api.covalenthq.com/v1/pricing/historical_by_addresses_v2/"+chain+"/usd/"+contract+"/?&key="+process.env.REACT_APP_COVALANT_API
     setStatus("Searching...");
     fetch(url)
     .then(response => response.json())
     .then((data) => {
-
+      console.log(data)
       if(data.error_message != null)
       {
         setStatus(data.error_message)
       }
-      if(data.data.items.length <= 0){
+      if(data.data.length <= 0){
         setStatus("Contract not found, check if the address and network is correct.")
       }
       
-      setAppName(data.data.items[0].contract_name)
-      setAppSymbol(data.data.items[0].contract_ticker_symbol)
-      setAppLogo(data.data.items[0].logo_url)
-      setAppContract(data.data.items[0].contract_address)
+      setAppName(data.data[0].contract_name)
+      setAppSymbol(data.data[0].contract_ticker_symbol)
+      setAppLogo(data.data[0].logo_url.replace("/tokens/","/tokens/"+chain+"/"))
+      setAppContract(data.data[0].contract_address)
       setStatus("Done");
     })
   }
@@ -74,14 +76,13 @@ function CreateProject(props) {
   const [appName,setAppName] = useState("Application Name")
   const [appSymbol,setAppSymbol] = useState("ABC")
   const [appLogo,setAppLogo] = useState("")
-  const [status,setStatus] = useState("teste")
+  const [status,setStatus] = useState("")
   const [appContract,setAppContract] = useState("0x0000000000000000000000000000000000000000")
 
   const handleOnChangeContract = (e) => {
     setContract(e.target.value);
   }
   const requestProjectCreation = () =>{
-    alert("create")
     if(appContract !== 0x0000000000000000000000000000000000000000 && status === "Done"){
       addProject(appName,appSymbol,appContract,appLogo);
     }
