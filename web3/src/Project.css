@@ -4,6 +4,7 @@
 }
 .wrapper {
   width: 30%;
+  min-width: 400px;
 }
 
 .proj .centred-block {
