@@ -29,7 +29,7 @@ img
     font-weight: 700;
     
 }
-.info{
+.card .info{
     display: flex;
     flex-direction: column;
     height: 100%;

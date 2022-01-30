@@ -18,14 +18,17 @@ const styles = {
 function Proposals(props) {
    var proposals = []
 
-   if(props.proposals != undefined){
-    for (var i = 0 ; i < props.proposals.length ;i++) {
+   if(Object.keys(props.proposals).length > 0){
+    for (const [key, value] of Object.entries(props.proposals)) {
+      console.log(key)
 
 			proposals.push(
-				<div className="proposal" key={props.proposals[i].timestamp}>
-					<p className="name">{props.proposals[i].name}</p>
-          <p className="description">{props.proposals[i].description}</p>
+        <a href={"/project/"+props.address+"/"+key} key={props.proposals[key].timestamp}>
+				<div className="proposal" >
+					<p className="name">{props.proposals[key].name}</p>
+          <p className="description">{props.proposals[key].description}</p>
 				</div>
+        </a>
 			);
       
 		};
@@ -37,7 +40,7 @@ function Proposals(props) {
 
 function Project(props) {
 	const [project, setProject] = useState({ name: "", symbol: "", address: "" });
-  const [proposals, setProposals] = useState();
+  const [proposals, setProposals] = useState({});
 	const params = useParams();
 
 	useEffect(() => {
@@ -53,12 +56,12 @@ function Project(props) {
 		});
 
     
-  var proposalsList = []
+  var proposalsList = {}
 	const proposalRef = ref(db, "proposals/" + params.project);
 	onValue(proposalRef, (snapshot) => {
 		const data = snapshot.val();
     for (let proposal in data) {
-      proposalsList.push(data[proposal]);
+      proposalsList[proposal] = data[proposal];
     }
     setProposals(proposalsList);
   });
@@ -92,7 +95,7 @@ function Project(props) {
 					</div>
 					<p className="proposals">Proposals</p>
 					<div>
-						<Proposals proposals={proposals} />
+						<Proposals proposals={proposals} address={params.project}/>
 					</div>
 				</div>
 			</div>
