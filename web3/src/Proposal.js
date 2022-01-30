@@ -20,12 +20,30 @@ const styles = {
 	},
 };
 
+function reduceVote(props){
+
+    var votes = props.vote;
+    votes[props.index] -= 1;
+    props.setVote(arr =>[...arr,votes]);
+
+
+}
+
+function addVote(props){
+    var votes = props.vote;
+    votes[props.index] += 1;
+    props.setVote(arr =>[...arr,votes]);
+}
+
+
 function VoteButton(props) {
+    //console.log(props)
 	return (
 		<div className="vote-button">
-			<div className={[props.button, "less"].join(" ")}>-</div>
-			<div className="quantity">0</div>
-			<div className={[props.button, "more"].join(" ")}>+</div>
+			<div onClick={()=>reduceVote(props)}
+            className={[props.button, "less"].join(" ")}>-</div>
+			<div className="quantity">{props.vote != undefined && props.vote.length > 0 ? props.vote[props.index] : 0}</div>
+			<div onClick={()=>addVote(props)} className={[props.button, "more"].join(" ")}>+</div>
 		</div>
 	);
 }
@@ -51,6 +69,7 @@ function VoteStatus(props) {
                 
 			);
 		}
+        
 		return options;
 	} else {
 		return <></>;
@@ -59,14 +78,23 @@ function VoteStatus(props) {
 
 function VoteOptions(props) {
 	var options = [];
+    
+    
+
+    
+    
+
+
 	if (props.options != undefined) {
 		for (var i = 0; i < props.options.length; i++) {
+            
 			options.push(
 				<div className="vote-option" key={props.options[i]}>
-					{props.options[i]} <VoteButton button={props.button} />
+					{props.options[i]} <VoteButton index={i} button={props.button} vote={props.vote} setVote={props.setVote}/>
 				</div>
 			);
 		}
+        //console.log(props.vote)
 		return options;
 	} else {
 		return <></>;
@@ -76,14 +104,17 @@ function VoteOptions(props) {
 function Proposal(props) {
 	const [project, setProject] = useState({ name: "", symbol: "", address: "" });
 	const [credits, setCredits] = useState(0);
+    const [vote, setVote] = useState([]);
 	const [proposal, setProposal] = useState({
 		name: "",
 		description: "",
 		credits: "0",
 	});
 	const params = useParams();
+    
 
 	useEffect(() => {
+
 		const db = getDatabase();
 		const starCountRef = ref(db, "projects/" + params.project);
 		onValue(starCountRef, (snapshot) => {
@@ -100,7 +131,17 @@ function Proposal(props) {
 			setProposal(data);
 			setCredits(data.credits);
 		});
+        
+        
 	}, []);
+
+    if (proposal.options != undefined && vote.length <= 1) {
+        var voteList = []
+        for (var i = 0; i < proposal.options.length; i++) {
+            voteList.push(0);
+        }
+        setVote(voteList);
+    }
 
 	return (
 		<div>
@@ -136,6 +177,8 @@ function Proposal(props) {
 						<VoteOptions
 							options={proposal.options}
 							button={props.classes.setButton}
+                            setVote={setVote}
+                            vote={vote}
 						/>
 						<a href="/">
 							<p className={[props.classes.button, "send-vote"].join(" ")}>
