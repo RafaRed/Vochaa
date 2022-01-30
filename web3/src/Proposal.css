@@ -1,13 +1,17 @@
 .proposal {
 	display: flex;
+	flex-wrap: wrap;
 	justify-content: center;
     margin-bottom: 60px;
 }
 .proposal .wrapper {
 	width: 30%;
+	min-width: 500px;
+	
 }
 .proposal .header {
 	margin-top: 60px;
+	
 	display: flex;
 	background-color: #fff;
 	flex-direction: column;
@@ -200,6 +204,7 @@ hr.solid {
 
 
 .proposal .info-block{
+	min-width: 300px;
     width: 15%;
     height: 100%;
     padding-bottom: 20px;
