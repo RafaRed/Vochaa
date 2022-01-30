@@ -1,6 +1,7 @@
 .proposal {
 	display: flex;
 	justify-content: center;
+    margin-bottom: 60px;
 }
 .proposal .wrapper {
 	width: 30%;
@@ -149,8 +150,8 @@ hr.solid {
 }
 .proposal .send-vote {
 	margin-top: 20px;
-	width: 90%;
-	height: 30px;
+	width: 100%;
+	height: 40px;
 	padding: 10px;
 	border-radius: 10px;
 	border: none;
@@ -160,9 +161,9 @@ hr.solid {
 	font-weight: 700;
     align-content: center;
     justify-content: center;
-	line-height: 60px;
+	line-height: 0px;
     text-align: center;
-    line-height: 30px;
+
 
 	-moz-user-select: -moz-none;
 	-khtml-user-select: none;
@@ -171,8 +172,37 @@ hr.solid {
 	user-select: none;
 }
 
+.proposal .send-vote-disabled {
+
+    margin-top: 20px;
+	width: 100%;
+	height: 40px;
+	padding: 10px;
+	border-radius: 10px;
+	border: none;
+	background-color: #8a8a8a;
+	color: #fff;
+	font-size: 20px;
+	font-weight: 700;
+    align-content: center;
+    justify-content: center;
+	line-height: 0px;
+    text-align: center;
+
+
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+
+}
+
+
 .proposal .info-block{
     width: 15%;
+    height: 100%;
+    padding-bottom: 20px;
     margin-top: 60px;
     margin-left: 60px;
     background-color: #fff;

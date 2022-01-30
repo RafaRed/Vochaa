@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import firebase from "./model/firebaseConnect";
+
 import Navbar from "./components/Navbar";
-import { getDatabase, ref, onValue } from "firebase/database";
+import { getDatabase, ref, onValue, runTransaction } from "firebase/database";
 import injectSheet from "react-jss";
 import { Link } from "react-router-dom";
 import "./Proposal.css";
@@ -20,19 +21,73 @@ const styles = {
 	},
 };
 
-function reduceVote(props){
 
-    var votes = props.vote;
-    votes[props.index] -= 1;
-    props.setVote(arr =>[...arr,votes]);
 
+function sendVotes(votes,address,proposal){
+    const updates = {};
+    const db = getDatabase();
+        //console.log(votes)
+        var update = "proposals/"+address+"/"+proposal+"/"+"votes"
+        //console.log(update)
+        const voteRef = ref(db, update);
+        runTransaction(voteRef, (vote) => {
+            
+            if (vote) {
+                console.log(votes.length)
+                for(var i = 0; i < votes.length; i++){
+                    if(votes[i] != 0){
+                        vote[i] += votes[i];
+                    }
+                    
+                }
+            }
+            return vote;
+          });
+          //console.log("done")
+    
+        
+   
+
+    
+}
+
+
+function getCredits(props, value){
+    var credits = props.credits;
+
+    for(var i = 0; i < props.vote.length; i++){
+        if(i === props.index){
+            credits -= Math.abs((props.vote[i] + value)) ** 2
+        }
+        else{
+            credits -= Math.abs(props.vote[i]) ** 2
+        }
+    }
+    return credits;
 
 }
 
+function reduceVote(props){
+    var credits = getCredits(props,-1);
+    if(credits >= 0)
+    {
+        var votes = props.vote;
+        votes[props.index] -= 1;
+        props.setVote(arr => [...votes]);
+        props.setCurrentCredits(credits)
+    }
+    
+}
+
 function addVote(props){
-    var votes = props.vote;
-    votes[props.index] += 1;
-    props.setVote(arr =>[...arr,votes]);
+    var credits = getCredits(props,+1);
+    if(credits >= 0){
+        var votes = props.vote;
+        votes[props.index] += 1;
+        props.setVote(arr => [...votes]);
+        props.setCurrentCredits(credits)
+    }
+    
 }
 
 
@@ -42,7 +97,7 @@ function VoteButton(props) {
 		<div className="vote-button">
 			<div onClick={()=>reduceVote(props)}
             className={[props.button, "less"].join(" ")}>-</div>
-			<div className="quantity">{props.vote != undefined && props.vote.length > 0 ? props.vote[props.index] : 0}</div>
+			<div className="quantity">{props.vote !== undefined && props.vote.length > 0 ? props.vote[props.index] : 0}</div>
 			<div onClick={()=>addVote(props)} className={[props.button, "more"].join(" ")}>+</div>
 		</div>
 	);
@@ -50,17 +105,29 @@ function VoteButton(props) {
 
 function VoteStatus(props) {
 	var options = [];
-	if (props.options != undefined) {
+    var totalVotes = 0;
+
+    for(var i = 0; i < props.currentVotes.length; i++){
+        totalVotes += Math.abs(props.currentVotes[i])
+    }
+    //console.log(totalVotes)
+	if (props.options !== undefined) {
 		for (var i = 0; i < props.options.length; i++) {
+            var percentage =(props.currentVotes[i]/totalVotes)*100
+            
+            if(percentage == undefined || isNaN(percentage)){
+                percentage = 0;
+            }
+            console.log(percentage)
 			options.push(
 				<div className="vote-status" key={props.options[i]}>
                     <div className="vote-status-header">
                     <p>{props.options[i]} </p>
-                    <p>0%</p>
+                    <p>{Math.round(percentage)}%</p>
                     </div>
 					
                     <div className="progress-bar">
-                        <div className="progress-bar-status" style={{width:"50%"}}>
+                        <div className="progress-bar-status" style={{width:percentage+"%"}}>
                         
                         </div>
                     </div>
@@ -78,19 +145,13 @@ function VoteStatus(props) {
 
 function VoteOptions(props) {
 	var options = [];
-    
-    
 
-    
-    
-
-
-	if (props.options != undefined) {
+	if (props.options !== undefined) {
 		for (var i = 0; i < props.options.length; i++) {
             
 			options.push(
 				<div className="vote-option" key={props.options[i]}>
-					{props.options[i]} <VoteButton index={i} button={props.button} vote={props.vote} setVote={props.setVote}/>
+					{props.options[i]} <VoteButton index={i} button={props.button} vote={props.vote} setVote={props.setVote} credits={props.credits} setCurrentCredits={props.setCurrentCredits}/>
 				</div>
 			);
 		}
@@ -104,7 +165,9 @@ function VoteOptions(props) {
 function Proposal(props) {
 	const [project, setProject] = useState({ name: "", symbol: "", address: "" });
 	const [credits, setCredits] = useState(0);
+    const [currentCredits,setCurrentCredits] = useState(0)
     const [vote, setVote] = useState([]);
+    const [currentVotes,setCurrentVotes] = useState([]);
 	const [proposal, setProposal] = useState({
 		name: "",
 		description: "",
@@ -130,8 +193,23 @@ function Proposal(props) {
 			const data = snapshot.val();
 			setProposal(data);
 			setCredits(data.credits);
+            setCurrentCredits(data.credits);
 		});
         
+        const voteRef = ref(
+			db,
+			"proposals/" + params.project + "/" + params.proposal +"/votes"
+		);
+		onValue(voteRef, (snapshot) => {
+            
+            var _votes = []
+			const data = snapshot.val();
+            for(let v in data){
+                _votes.push(data[v])
+            }
+            setCurrentVotes(_votes);
+
+		});
         
 	}, []);
 
@@ -169,7 +247,7 @@ function Proposal(props) {
 							<p className="vote-title">VOTE</p>
 							<div className="credits">
 								<p className="credits-label">CREDITS</p>
-								<p className="credits-value">{credits}</p>
+								<p className="credits-value">{currentCredits}</p>
 							</div>
 						</div>
 						<hr className="solid"></hr>
@@ -179,12 +257,14 @@ function Proposal(props) {
 							button={props.classes.setButton}
                             setVote={setVote}
                             vote={vote}
+                            credits={credits}
+                            setCurrentCredits={setCurrentCredits}
 						/>
-						<a href="/">
-							<p className={[props.classes.button, "send-vote"].join(" ")}>
+						
+							<button onClick={currentCredits !== credits ? (()=>sendVotes(vote,params.project,params.proposal)) : ()=>{}} className={[currentCredits !== credits ? props.classes.button : "", currentCredits !== credits ? "send-vote" : "send-vote-disabled"].join(" ")}>
 								SEND VOTE
-							</p>
-						</a>
+							</button>
+						
 					</div>
 				</div>
                 <div className="info-block">
@@ -198,11 +278,11 @@ function Proposal(props) {
                     </div>
                     <div className="line">
                         <p>Start Date</p>
-                        <p>0x000000...</p>
+                        <p>{proposal.startDate}</p>
                     </div>
                     <div className="line">
                         <p>End Date</p>
-                        <p>0x000000...</p>
+                        <p>{proposal.endDate}</p>
                     </div>
                     <div className="info-header-2">
                         <p className="title">Current Results</p>
@@ -211,6 +291,7 @@ function Proposal(props) {
                     <VoteStatus
 							options={proposal.options}
 							button={props.classes.setButton}
+                            currentVotes={currentVotes}
 						/>
                     
                 </div>

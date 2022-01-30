@@ -20,14 +20,16 @@ const styles = {
   },
 };
 
-function addProject(name,symbol,address,logo){
+async function addProject(name,symbol,address,logo){
   const db = getDatabase();
-  set(ref(db, 'projects/'+address), {
+  await set(ref(db, 'projects/'+address), {
     name:name,
     logo:logo,
     symbol:symbol,
     address:address,
   });
+  
+  window.location.href = "/project"+"/"+address;
 }
 
 

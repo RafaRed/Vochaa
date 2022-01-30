@@ -59,18 +59,24 @@ function Credits(props) {
 	</div>;
 }
 
-function submitProposal(address, name, description, startDate, endDate, credits, options){
+async function submitProposal(address, name, description, startDate, endDate, credits, options){
     const db = getDatabase();
-    console.log(options)
-    push(ref(db, 'proposals/'+address), {
+	var votes=[]
+	for(var i = 0; i < options.length; i++){
+		votes.push(0);
+	}
+    var doc = await push(ref(db, 'proposals/'+address), {
         timestamp:moment().unix(),
         name:name,
         description:description,
         startDate:startDate.unix(),
         endDate:endDate.unix(),
         credits:credits,
-        options:options
+        options:options,
+		votes:votes
     });
+
+	window.location.href = "/project"+"/"+address+"/"+doc.key;
 
 }
 
