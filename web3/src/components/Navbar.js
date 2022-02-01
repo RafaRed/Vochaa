@@ -19,7 +19,7 @@ function Navbar(props) {
   <div className='menu'>
   <a className={props.menu === "home" ? "active" : ""} href="/">HOME</a>
   <a className={props.menu === "explore" ? "active" : ""} href="/explore">PROJECTS</a>
-  <a className={props.menu === "about" ? "active" : ""} href="#about">ABOUT</a>
+  <a className={props.menu === "about" ? "active" : ""} href="https://github.com/RafaRed/Vochaa">ABOUT</a>
   </div>
  
   <ConnectMetamask setWallet={props.setWallet}/>
