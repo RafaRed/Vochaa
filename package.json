@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "moment": "^2.29.1",
-    "react-datetime": "^3.1.1"
-    
-  }
-}
