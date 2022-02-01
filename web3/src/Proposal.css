@@ -11,15 +11,23 @@
 }
 .proposal .header {
 	margin-top: 60px;
+
 	
 	display: flex;
+
 	background-color: #fff;
 	flex-direction: column;
 	border-radius: 10px;
 	padding: 20px;
 }
+
+.proposal .description{
+
+
+}
 .proposal .line {
 	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
 }
 
@@ -38,6 +46,7 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+
 }
 .proposal .image-block img {
 	height: 90px;
@@ -55,6 +64,8 @@
 }
 
 .block {
+
+
 	margin-top: 20px;
 	padding: 20px;
 	background-color: #fff;
@@ -277,4 +288,11 @@ hr.solid-80 {
     background-color: #10D654;
     margin-bottom: 20px;
     height: 10px;
+}
+
+.proposal .sender{
+	max-width: 135px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }

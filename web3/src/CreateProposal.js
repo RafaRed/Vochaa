@@ -59,7 +59,7 @@ function Credits(props) {
 	</div>;
 }
 
-async function submitProposal(address, name, description, startDate, endDate, credits, options){
+async function submitProposal(address, name, description, startDate, endDate, credits, options, wallet){
     const db = getDatabase();
 	var votes=[]
 	for(var i = 0; i < options.length; i++){
@@ -73,7 +73,9 @@ async function submitProposal(address, name, description, startDate, endDate, cr
         endDate:endDate.unix(),
         credits:credits,
         options:options,
-		votes:votes
+		votes:votes,
+		voters:[""],
+		sender:wallet
     });
 
 	window.location.href = "/project"+"/"+address+"/"+doc.key;
@@ -99,7 +101,7 @@ function SubmitButton(props) {
 		return (
 			<button
 				type="button"
-                onClick={()=> submitProposal(props.address,props.name,props.description,props.startDate,props.endDate,props.credits,props.options)}
+                onClick={props.wallet === undefined ? ()=>alert("Please connect to your wallet first.") : ()=> submitProposal(props.address,props.name,props.description,props.startDate,props.endDate,props.credits,props.options,props.wallet)}
 				className={["add-button", props.classes.button].join(" ")}>
 				SUBMIT PROPOSAL
 			</button>
@@ -187,11 +189,12 @@ function CreateProposal(props) {
 	const [credits, setCredits] = useState(100);
 	const [option, setOption] = useState("");
 	const [options, setOptions] = useState([]);
+	const [wallet,setWallet] = useState();
 
 
 	return (
 		<>
-			<Navbar menu="explore" />
+			<Navbar menu="explore" setWallet={setWallet}/>
 			<div className="create-proposal">
 				<div className="wrapper">
 					<div className="header">
@@ -287,6 +290,7 @@ function CreateProposal(props) {
 						startDate={startDate}
 						endDate={endDate}
 						options={options}
+						wallet={wallet}
 					/>
 				</div>
 			</div>

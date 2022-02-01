@@ -1,6 +1,7 @@
 import React from 'react';
 import './Navbar.css'
 import injectSheet from 'react-jss';
+import ConnectMetamask from "./ConnectMetamask"
 
 const styles ={
   clickable:{
@@ -15,10 +16,13 @@ const styles ={
 function Navbar(props) {
 
   return <div className="topnav">
-    
+  <div className='menu'>
   <a className={props.menu === "home" ? "active" : ""} href="/">HOME</a>
   <a className={props.menu === "explore" ? "active" : ""} href="/explore">PROJECTS</a>
   <a className={props.menu === "about" ? "active" : ""} href="#about">ABOUT</a>
+  </div>
+ 
+  <ConnectMetamask setWallet={props.setWallet}/>
 </div>;
 }
 

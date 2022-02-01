@@ -20,13 +20,14 @@ const styles = {
   },
 };
 
-async function addProject(name,symbol,address,logo){
+async function addProject(name,symbol,address,logo,wallet){
   const db = getDatabase();
   await set(ref(db, 'projects/'+address), {
     name:name,
     logo:logo,
     symbol:symbol,
     address:address,
+    sender:wallet
   });
   
   window.location.href = "/project"+"/"+address;
@@ -80,22 +81,25 @@ function CreateProject(props) {
   const [appLogo,setAppLogo] = useState("")
   const [status,setStatus] = useState("")
   const [appContract,setAppContract] = useState("0x0000000000000000000000000000000000000000")
+  const [wallet,setWallet] = useState();
 
   const handleOnChangeContract = (e) => {
     setContract(e.target.value);
   }
   const requestProjectCreation = () =>{
     if(appContract !== 0x0000000000000000000000000000000000000000 && status === "Done"){
-      addProject(appName,appSymbol,appContract,appLogo);
+      addProject(appName,appSymbol,appContract,appLogo,wallet);
     }
     else{
       alert("cannot add this project.")
     }
   }
 
+
+
   return (
     <>
-      <Navbar menu="explore" />
+      <Navbar menu="explore" setWallet={setWallet} />
       <div className="project">
         <div className="wrapper">
           <div className="header">
@@ -155,7 +159,7 @@ function CreateProject(props) {
             </div>
           </div>
 
-          <button type="button" onClick={requestProjectCreation} className={[ appContract === "0x0000000000000000000000000000000000000000" ? "" : props.classes.button, appContract === "0x0000000000000000000000000000000000000000" ? "add-button-off" : "add-button"].join(" ")} >ADD THIS PROJECT</button>
+          <button type="button" onClick={wallet == undefined ? ()=>alert("Please connect to your wallet first.") : requestProjectCreation} className={[ appContract === "0x0000000000000000000000000000000000000000" ? "" : props.classes.button, appContract === "0x0000000000000000000000000000000000000000" ? "add-button-off" : "add-button"].join(" ")} >ADD THIS PROJECT</button>
         </div>
       </div>
     </>
