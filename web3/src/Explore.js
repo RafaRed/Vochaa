@@ -23,10 +23,12 @@ const styles ={
 }
 
 function CreateBoard(props){
+
   const projectWidgets = []
   if(props.projects != undefined && Object.keys(props.projects).length > 0){
     for (const [key, value] of Object.entries(props.projects)) {
       const item = props.projects[key];
+      if(props.search == undefined || item['name'].toLowerCase().startsWith(props.search.toLowerCase())){
       const project = (
         <Link to={"/project/"+props.projects[key].address} key={item['name']}>       
         <div  className={[props.classes.app,"app"].join(' ')}>
@@ -39,6 +41,7 @@ function CreateBoard(props){
       )
       projectWidgets.push(project)
     }
+    }
   }
   
   return projectWidgets;
@@ -49,6 +52,7 @@ function CreateBoard(props){
 function Explore(props) {
 
   const [projects,setProjects] = useState();
+  const [search,setSearch] = useState();
 
   useEffect(() =>{
 
@@ -77,19 +81,23 @@ function Explore(props) {
               Search for a project you want to support, voting and sharing your
               ideas.
             </p>
-
+            <div className="search-bar">
             <input
               type="text"
               id="fname"
               name="fname"
               className="block-input"
+              onChange={(val)=>setSearch(val.target.value)}
             />
+            <img src="/images/search.png"/>
+            </div>
+            
             <p className="description">
             or <a className={props.classes.links} href="/create-project">add a project you know</a>
             </p>
           </div>
           <div className="board">
-          <CreateBoard projects={projects} classes={props.classes}/>
+          <CreateBoard projects={projects} classes={props.classes} search={search}/>
           </div>
           
         </div>

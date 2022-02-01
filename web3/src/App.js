@@ -13,7 +13,7 @@ function App() {
           </h1>
           <p className="description">
             Be part of the community by adding new projects, suggesting new
-            proposals<br></br> and voting for your favorite proposals using
+            proposals<br></br> and voting for your favorite blockchain proposals using
             quadratic voting systems.
           </p>
         </div>

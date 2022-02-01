@@ -244,6 +244,11 @@ function Proposal(props) {
 		}
 		setVote(voteList);
 	}
+	var now = moment().unix();
+	// 0 = waiting 
+	// 1 = running 
+	// 2 = ended
+	var status = now > proposal.startDate ? now < proposal.endDate ? 1 : 2 : 0;
 
 	return (
 		<div>
@@ -287,15 +292,17 @@ function Proposal(props) {
 
 						<button
 							onClick={
+								status == 1 ?
 								currentCredits !== credits
 									? () => sendVotes(vote, params.project, params.proposal, wallet)
-									: () => {}
+									: () => {} : ()=>{}
 							}
 							className={[
-								currentCredits !== credits ? props.classes.button : "",
-								currentCredits !== credits ? "send-vote" : "send-vote-disabled",
+								currentCredits !== credits && status == 1 ? props.classes.button : "",
+								currentCredits !== credits && status == 1 ? "send-vote" : "send-vote-disabled",
 							].join(" ")}>
-							SEND VOTE
+							{status == 0 ? "STARTS ON - " + moment.unix(proposal.startDate).format("DD MMM YYYY hh:mm a").toUpperCase() :
+							 status == 1 ? "SEND VOTE" : "ENDED ON - " + moment.unix(proposal.endDate).format("DD MMM YYYY hh:mm a").toUpperCase()}
 						</button>
 					</div>
 				</div>
