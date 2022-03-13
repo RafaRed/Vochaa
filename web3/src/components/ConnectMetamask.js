@@ -49,7 +49,7 @@ function ConnectMetamask(props) {
       restoureConnection();
       useEffect(() =>{
 
-        if(props.setWallet != undefined){
+        if(props.setWallet !== undefined){
           props.setWallet(account)
         }
         
