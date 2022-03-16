@@ -7,7 +7,7 @@ Vochaa is an open-source platform aiming to bring quadratic voting to blockchain
 https://github.com/RafaRed/Vochaa/blob/main/docs/vochaa%20slidedeck.pdf
 
 ## Live Demo
-https://vochaa.vercel.app/
+https://vochaaq.vercel.app/
 
 ## Video Demo
 [![Video Demo](http://img.youtube.com/vi/KaV2vNUpWms/0.jpg)](https://www.youtube.com/watch?v=KaV2vNUpWms)  
